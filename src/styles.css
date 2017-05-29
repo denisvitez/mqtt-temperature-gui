@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+body
+{
+    background: #424242;
+}
+
+.arrow-up {
+  width: 0; 
+  height: 0; 
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  
+  border-bottom: 20px solid#4CAF50;
+}
+
+.arrow-down {
+  width: 0; 
+  height: 0; 
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  
+  border-top: 20px solid #F44336;
+}
+
+.arrow-right {
+  width: 0; 
+  height: 0; 
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  
+  border-left: 20px solid #9E9E9E;
+}
