@@ -13,8 +13,8 @@ export class AppComponent {
   public appVersion
   temps: any[] = [];
   humes: any[] = [];
-  tempTopic = "RPI/dev1/temp";
-  humTopic = "RPI/dev1/hum";
+  tempTopic = "rpi/csp/temp";
+  humTopic ="rpi/csp/hum";
   tempSegments: GaugeSegment[] = [];
   humSegments: GaugeSegment[] = [];
   tempLabels: GaugeLabel[] = [];
@@ -29,7 +29,7 @@ export class AppComponent {
 
   public constructor() {
     this.appVersion = appVersion
-    this._client = new Paho.MQTT.Client("192.168.1.33", 9001, "132456");
+    this._client = new Paho.MQTT.Client("vitez.si", 9001, "132456");
     //temp
     this.tempSeg = new GaugeSegment();
     this.tempLbl = new GaugeLabel();

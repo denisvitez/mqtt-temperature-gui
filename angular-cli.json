@@ -1,7 +1,7 @@
 {
   "project": {
     "version": "1.0.0-beta.30",
-    "name": "mission-control-gui"
+    "name": "mqtt-temperature-gui"
   },
   "apps": [
     {
