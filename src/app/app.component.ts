@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import {Paho} from '../../node_modules/ng2-mqtt/mqttws31';
+import { ChartsModule } from 'ng2-charts';
 import { GaugeModule, GaugeSegment, GaugeLabel } from 'ng2-kw-gauge';
 
 const { version: appVersion } = require('../../package.json')
@@ -13,6 +14,7 @@ export class AppComponent {
   public appVersion
   temps: any[] = [];
   humes: any[] = [];
+  histTopic = "rpi/csp/hist";
   tempTopic = "rpi/csp/temp";
   humTopic ="rpi/csp/hum";
   tempSegments: GaugeSegment[] = [];
@@ -58,6 +60,9 @@ export class AppComponent {
     this.humSeg.goal = 100;
     this.humSegments.push(this.humSeg);
     this.humLabels.push(this.humLbl);
+    
+    setTimeout(function() {document.getElementById("defaultOpen").click();}, 1);
+
     this._client.onConnectionLost = (responseObject: Object) => {
       console.log('Connection lost.');
       console.log();
@@ -115,6 +120,29 @@ export class AppComponent {
           }
         }      
       } 
+      else if(message.destinationName == this.histTopic)
+      {
+        var data = JSON.parse(message.payloadString);
+
+        var x = [
+          {data: [], label: 'Temperatura'}
+        ];
+        var y = [];
+
+        for(var i in data) {
+          x[0].data.push(data[i].temp);
+          y.push(data[i].date + " " + data[i].hour);
+        }
+
+        this.lineChartData = x;
+        this.lineChartLabels = y;
+        
+        let clone = JSON.parse(JSON.stringify(this.lineChartData));
+        clone[0].data = x[0].data;
+        this.lineChartData = clone;
+
+
+      } 
       else
       {
         console.log("Unknown topic: "+message.destinationName);
@@ -128,8 +156,53 @@ export class AppComponent {
     console.log('Connected to broker.');
     this._client.subscribe(this.tempTopic, { onSuccess: this.onSubscribed.bind(this) });
     this._client.subscribe(this.humTopic, { onSuccess: this.onSubscribed.bind(this) });
+    this._client.subscribe(this.histTopic, { onSuccess: this.onSubscribed.bind(this) });
   }
   private onSubscribed():void {
     console.log("Subscribed...")
+
   }
+
+  public openTab(tab) {
+    var i, tabcontent, tablinks;
+
+    tabcontent = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+    }
+  
+    document.getElementById(tab).style.display = "block";
+
+    if(tab == "history") {
+      this.showHistory();
+    }
+  }
+
+  private showHistory():void {
+    console.log("Show history");
+    let message = new Paho.MQTT.Message('1');
+
+    message.destinationName = 'rpi/csp/get/hist';
+    console.log(message);
+    this._client.send(message);
+  }
+  public lineChartData:Array<any> = [
+    {data: [], label: 'Temperatura'}
+  ];
+  public lineChartLabels:Array<any> = [];
+  public lineChartOptions:any = {
+    responsive: true
+  };
+  public lineChartColors:Array<any> = [
+    { // grey
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'rgba(148,159,177,1)',
+      pointBackgroundColor: 'rgba(148,159,177,1)',
+      pointBorderColor: '#000',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    }
+  ];
+  public lineChartLegend:boolean = true;
+  public lineChartType:string = 'line';
 }

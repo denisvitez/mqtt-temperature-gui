@@ -1,44 +1,72 @@
-<div class="row title">
-  <div class="col-md-12">
-    MQTT Temperature - {{appVersion}}
-  </div>
-</div>
+
 <div class="row">
   <div class="col-md-12">
-    NORTH
+    <div class="tab">
+      <button class="tablinks btn" (click)="openTab('live')">Live</button>
+      <button class="tablinks btn" (click)="openTab('history')" id="defaultOpen">History</button>
+    </div>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-4 col-md-offset-1">
-    <ng2-kw-gauge [segments]="tempSegments" [labels]="tempLabels"></ng2-kw-gauge>
+
+
+<div class="tabcontent" id="live">
+  <div class="row title">
+    <div class="col-md-12">
+      R&D Temperature - Live ({{appVersion}})
+    </div>
   </div>
-  <div class="col-md-4 col-md-offset-1">
-    <ng2-kw-gauge [segments]="humSegments" [labels]="humLabels"></ng2-kw-gauge>
+  <div class="row">
+    <div class="col-md-4 col-md-offset-1">
+      <ng2-kw-gauge [segments]="tempSegments" [labels]="tempLabels"></ng2-kw-gauge>
+    </div>
+    <div class="col-md-4 col-md-offset-1">
+      <ng2-kw-gauge [segments]="humSegments" [labels]="humLabels"></ng2-kw-gauge>
+    </div>
+  </div>
+  <div class="row white">
+    <div class="col-md-4 col-md-offset-1 big bold centered">
+      TEMPERATURE
+    </div>
+    <div class="col-md-1 big bold centered">
+      <div *ngIf="tempRising == true" class="arrow-up"></div>
+      <div *ngIf="tempRising == false" class="arrow-down"></div>
+      <div *ngIf="tempRising == null" class="arrow-right"></div>
+    </div>
+    <div class="col-md-4 big bold centered">
+      HUMIDITY
+    </div>
+    <div class="col-md-1 big bold centered">
+      <div *ngIf="humRising == true" class="arrow-up"></div>
+      <div *ngIf="humRising == false" class="arrow-down"></div>
+      <div *ngIf="humRising == null" class="arrow-right"></div>
+    </div>
+  </div>
+  <div class="row bold">
+    <div class="col-md-4 col-md-offset-1 red centered">
+      <div *ngFor="let item of temps" class="big">{{item}}°C</div>
+    </div>
+    <div class="col-md-4 col-md-offset-1 blue centered">
+      <div *ngFor="let item of humes" class="big">{{item}}%RH</div>
+    </div>
   </div>
 </div>
-<div class="row white">
-  <div class="col-md-4 col-md-offset-1 big bold centered">
-    TEMPERATURE
+
+
+<div class="tabcontent" id="history">
+  <div class="row title">
+    <div class="col-md-12">
+      R&D Temperature - History ({{appVersion}})
+    </div>
   </div>
-  <div class="col-md-1 big bold centered">
-    <div *ngIf="tempRising == true" class="arrow-up"></div>
-    <div *ngIf="tempRising == false" class="arrow-down"></div>
-    <div *ngIf="tempRising == null" class="arrow-right"></div>
-  </div>
-  <div class="col-md-4 big bold centered">
-    HUMIDITY
-  </div>
-  <div class="col-md-1 big bold centered">
-    <div *ngIf="humRising == true" class="arrow-up"></div>
-    <div *ngIf="humRising == false" class="arrow-down"></div>
-    <div *ngIf="humRising == null" class="arrow-right"></div>
-  </div>
-</div>
-<div class="row bold">
-  <div class="col-md-4 col-md-offset-1 red centered">
-    <div *ngFor="let item of temps" class="big">{{item}}°C</div>
-  </div>
-  <div class="col-md-4 col-md-offset-1 blue centered">
-    <div *ngFor="let item of humes" class="big">{{item}}%RH</div>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2" id="hist">
+      <canvas baseChart
+                [datasets]="lineChartData"
+                [labels]="lineChartLabels"
+                [options]="lineChartOptions"
+                [colors]="lineChartColors"
+                [legend]="lineChartLegend"
+                [chartType]="lineChartType"></canvas>
+    </div>
   </div>
 </div>
