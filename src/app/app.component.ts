@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {SimpleChanges} from '@angular/core';
 import {Paho} from '../../node_modules/ng2-mqtt/mqttws31';
 import { ChartsModule } from 'ng2-charts';
 import { GaugeModule, GaugeSegment, GaugeLabel } from 'ng2-kw-gauge';
@@ -12,6 +13,7 @@ const { version: appVersion } = require('../../package.json')
 })
 export class AppComponent {
   public appVersion
+  days = 1;
   temps: any[] = [];
   humes: any[] = [];
   histTopic = "rpi/csp/hist";
@@ -122,25 +124,32 @@ export class AppComponent {
       } 
       else if(message.destinationName == this.histTopic)
       {
-        var data = JSON.parse(message.payloadString);
+        try {
+          var data = JSON.parse(message.payloadString);
 
-        var x = [
-          {data: [], label: 'Temperatura'}
-        ];
-        var y = [];
+          var x = [
+            {data: [], label: 'Temperatura'}
+          ];
+          var y = [];
 
-        for(var i in data) {
-          x[0].data.push(data[i].temp);
-          y.push(data[i].date + " " + data[i].hour);
+          for(var i in data.data) {
+            x[0].data.push(data.data[i].temp);
+            if(parseInt(data.days) == 1)
+              y.push(data.data[i].hour);
+            else
+              y.push(data.data[i].date + " " + data.data[i].hour);
+          }
+          
+          this.lineChartLabels = y;
+
+          var that = this;
+          setTimeout(function() {
+            that.lineChartData = x;
+          }, 0);
         }
-
-        this.lineChartData = x;
-        this.lineChartLabels = y;
-        
-        let clone = JSON.parse(JSON.stringify(this.lineChartData));
-        clone[0].data = x[0].data;
-        this.lineChartData = clone;
-
+        catch(e) {
+          console.log(e);
+        }
 
       } 
       else
@@ -177,15 +186,30 @@ export class AppComponent {
       this.showHistory();
     }
   }
-
+  
   private showHistory():void {
     console.log("Show history");
     let message = new Paho.MQTT.Message('1');
 
     message.destinationName = 'rpi/csp/get/hist';
-    console.log(message);
     this._client.send(message);
   }
+
+  public showHistDays() {
+    var days = (<HTMLInputElement>document.getElementById('days')).value;
+    if(parseInt(days) > 7 || parseInt(days) < 1) {
+      alert("Izberite število dni med 1 in 7!")
+      return false;
+    }
+
+    console.log("Show history days");
+    let message = new Paho.MQTT.Message(days);
+
+    message.destinationName = 'rpi/csp/get/hist';
+    this._client.send(message);
+    return false;
+  }
+
   public lineChartData:Array<any> = [
     {data: [], label: 'Temperatura'}
   ];

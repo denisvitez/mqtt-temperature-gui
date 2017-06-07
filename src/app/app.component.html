@@ -2,8 +2,8 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tab">
-      <button class="tablinks btn" (click)="openTab('live')">Live</button>
-      <button class="tablinks btn" (click)="openTab('history')" id="defaultOpen">History</button>
+      <button class="tablinks btn" (click)="openTab('live')" id="defaultOpen">Live</button>
+      <button class="tablinks btn" (click)="openTab('history')">History</button>
     </div>
   </div>
 </div>
@@ -67,6 +67,15 @@
                 [colors]="lineChartColors"
                 [legend]="lineChartLegend"
                 [chartType]="lineChartType"></canvas>
+    </div>
+  </div>
+  <div class="row" style="padding-top: 2vh">
+    <div class="col-md-4 col-md-offset-4">
+      <form (submit)="showHistDays()">
+        <span style="color: white">Število dni:</span>
+        <input id="days" type="number" value="{{days}}" />
+        <input type="submit" value="Prikaži" />
+      </form>
     </div>
   </div>
 </div>
