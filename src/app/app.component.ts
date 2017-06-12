@@ -197,8 +197,8 @@ export class AppComponent {
 
   public showHistDays() {
     var days = (<HTMLInputElement>document.getElementById('days')).value;
-    if(parseInt(days) > 7 || parseInt(days) < 1) {
-      alert("Izberite število dni med 1 in 7!")
+    if(parseInt(days) > 30 || parseInt(days) < 1) {
+      alert("Izberite število dni med 1 in 30!")
       return false;
     }
 
